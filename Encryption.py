@@ -3,13 +3,14 @@ Greg Dews
 CS3750-001
 Homework 2
 Encryption
+                __][Scrapped][__
 """
 
 deltaOne = 0x11111111
 deltaTwo = 0x22222222
 
 def encryption():
-    data = takeValue()
+    #data = takeValue()
 
     
 
