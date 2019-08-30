@@ -6,7 +6,7 @@
  * 
  * Encryption - TEA (Tiny Encryption Algorithm)
  * Input:  Keyboard (kb)
- * Output: Standard out (System.out)
+ * Output: Standard out (print)
  *          Will have system out dumped into text file via cs3750a server command
  * 
  *      To-Do
@@ -33,14 +33,11 @@ public class Encryption {
     }
 
     public void encrypt() {
-        System.out.println("Please input K[i] in Hex String (without '0x')");
         int data = pullHexUInt();
         int key = pullHexUInt();
-
         cryptext = encrypt(data, key);
 
         displayResults();
-        
     }
 
     // private encryption function data = 64-bit, key = 128-bit
@@ -56,6 +53,7 @@ public class Encryption {
     private int pullHexUInt() {
         Boolean retry;
         int uint = 0;
+        System.out.println("Please input K[i] in Hex String (without '0x')");
         do {
 
             retry = false;
