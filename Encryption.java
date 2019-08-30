@@ -58,7 +58,7 @@ public class Encryption {
 
             retry = false;
             try {
-                uint = Integer.parseUnsignedInt(kb.nextLine());
+                uint = Integer.parseUnsignedInt(kb.nextLine(),16);
             } catch (NumberFormatException e) {
                 System.out.println("That was not a valid Hex String \n" + "Please try again.");
                 retry = true;
