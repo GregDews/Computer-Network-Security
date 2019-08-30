@@ -76,7 +76,10 @@ public class Encryption {
 
     // display formatted results
     private void displayResults(){
-        // Stub - See homework requirements for format
+        for (int i = 0; i < 3; i++) {
+            System.out.printf("L[%d] = %s    R[%d] = %s %n",
+             i, Integer.toHexString(L[i]), i, Integer.toHexString(R[i]));
+        }
     }
 
     public static void main(String[] args) {
