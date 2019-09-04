@@ -14,6 +14,7 @@
  *  displayResults() private method - create printf statements
 */
 import java.util.Scanner;
+import java.math.*;
 
 public class Encryption {
 
@@ -44,14 +45,14 @@ public class Encryption {
     private void encryptTEA(){
         for(int pass = 1; pass <= 2; pass++){
             L[pass] = R[pass-1];
-            R[pass] = L[pass] + bigF(R[pass-1], K[pass-1], K[pass], delta[pass]); 
+            R[pass] = (L[pass-1] + bigF(R[pass-1], K[pass-1], K[pass], delta[pass])) % (int)Math.pow(2,32); 
         }
     }
 
     // subroutine function of encryption
     private int bigF(int r, int k1, int k2, int d){
         int result = 0;
-        result = ((r<<4) + k1) ^ ((r>>5) + k2) ^ (r + d);
+        result = (((r<<4) + k1)% (int)Math.pow(2,32)) ^ (((r>>5) + k2)% (int)Math.pow(2,32)) ^ ((r + d)% (int)Math.pow(2,32));
         return result;
     }
 
