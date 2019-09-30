@@ -14,7 +14,6 @@
  *  displayResults() private method - create printf statements
 */
 import java.util.Scanner;
-import java.math.*;
 
 public class Encryption {
 
