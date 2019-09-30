@@ -21,13 +21,11 @@ import javax.crypto.Cipher;
 public class Sender {
   public static void main(String[] args) throws Exception {
 
-    byte[] input = "012340123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF".getBytes();
+    byte[] input = "Well,shit...".getBytes();
+
     Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
-
-    PublicKey pubKey = readPubKeyFromFile("RSAPublic.key");
-    //PrivateKey privKey = readPrivKeyFromFile("RSAPrivate.key");
+    PublicKey pubKey = readPubKeyFromFile("XPublic.key");
     SecureRandom random = new SecureRandom();
-
     cipher.init(Cipher.ENCRYPT_MODE, pubKey, random);
 
     byte[] cipherText = cipher.doFinal(input);
@@ -74,11 +72,12 @@ public class Sender {
 
 
   //read key parameters from a file and generate the private key 
-  public static PrivateKey readPrivKeyFromFile(String keyFileName) 
+  public static PrivateKey readPrivKeyFromFile() 
       throws IOException {
 
     InputStream in = 
-        Sender.class.getResourceAsStream(keyFileName);
+        //Sender.class.getResourceAsStream(keyFileName);
+        new FileInputStream("../keys/Xprivate.key");
     ObjectInputStream oin =
         new ObjectInputStream(new BufferedInputStream(in));
 
@@ -86,7 +85,7 @@ public class Sender {
       BigInteger m = (BigInteger) oin.readObject();
       BigInteger e = (BigInteger) oin.readObject();
 
-      System.out.println("Read from " + keyFileName + ": modulus = " + 
+      System.out.println("Read from Xprivate.key: modulus = " + 
           m.toString() + ", exponent = " + e.toString() + "\n");
 
       RSAPrivateKeySpec keySpec = new RSAPrivateKeySpec(m, e);
