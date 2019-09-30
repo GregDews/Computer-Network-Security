@@ -21,13 +21,19 @@ import javax.crypto.Cipher;
 public class Sender {
   public static void main(String[] args) throws Exception {
 
-    byte[] input = "Well,shit...".getBytes();
-
     Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
     PublicKey pubKey = readPubKeyFromFile("XPublic.key");
     SecureRandom random = new SecureRandom();
     cipher.init(Cipher.ENCRYPT_MODE, pubKey, random);
 
+    // check size of file
+     byte[] cipherBlock = new byte[cipher.getBlockSize()]
+    // set size as # of blocks before partial block
+    for(int i = 0; i < size; i++){
+        cipherBlock = 2;
+    }
+
+    // finalize last block
     byte[] cipherText = cipher.doFinal(input);
 
     // display ciphertext byte info
@@ -42,12 +48,15 @@ public class Sender {
     System.out.println("");
   }
 
+// read input file as array?
+
   //read key parameters from a file and generate the public key 
   public static PublicKey readPubKeyFromFile(String keyFileName) 
       throws IOException {
 
     InputStream in = 
-        Sender.class.getResourceAsStream(keyFileName);
+        //Sender.class.getResourceAsStream(keyFileName);
+        new FileInputStream("./KeyGen/XRSAPublic.key");
     ObjectInputStream oin =
         new ObjectInputStream(new BufferedInputStream(in));
 
@@ -77,7 +86,7 @@ public class Sender {
 
     InputStream in = 
         //Sender.class.getResourceAsStream(keyFileName);
-        new FileInputStream("../keys/Xprivate.key");
+        new FileInputStream("./KeyGen/XRSAPrivate.key");
     ObjectInputStream oin =
         new ObjectInputStream(new BufferedInputStream(in));
 
