@@ -8,13 +8,10 @@ import java.io.*;
 import java.security.PublicKey;
 import java.security.PrivateKey;
 import java.security.SecureRandom;
-
 import java.security.KeyFactory;
 import java.security.spec.RSAPublicKeySpec;
 import java.security.spec.RSAPrivateKeySpec;
-
 import java.math.BigInteger;
-
 import javax.crypto.Cipher;
 
 
@@ -48,7 +45,7 @@ public class Sender {
     System.out.println("");
   }
 
-// read input file as array?
+// read input file - call 
 
   //read key parameters from a file and generate the public key 
   public static PublicKey readPubKeyFromFile(String keyFileName) 
