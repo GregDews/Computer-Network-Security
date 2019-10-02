@@ -1,37 +1,95 @@
+
 /*
 Greg Dews
 To-Do
     still sifting through provided code. Modyfing to match needs
     need to create a loop to handle buffer issues and array size matching
+
+sender 
+    enKx-(SHA256(M))
+    append message to that
+    enkxy
+
 */
 import java.io.*;
+import java.util.Scanner;
+import java.security.Key;
+import java.security.MessageDigest;
 import java.security.PublicKey;
 import java.security.PrivateKey;
 import java.security.SecureRandom;
 import java.security.KeyFactory;
 import java.security.spec.RSAPublicKeySpec;
+import java.security.spec.KeySpec;
 import java.security.spec.RSAPrivateKeySpec;
 import java.math.BigInteger;
 import javax.crypto.Cipher;
 
-
 public class Sender {
   public static void main(String[] args) throws Exception {
 
-    Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
-    PublicKey pubKey = readPubKeyFromFile("XPublic.key");
+    // Get Ciphers/Hasher/keys
+    Cipher RSA = Cipher.getInstance("RSA/ECB/PKCS1Padding");
+    Cipher AES = Cipher.getInstance("AES/ECB/PKCS1Padding");
+    MessageDigest hasher = MessageDigest.getInstance("SHA-256");
+    PrivateKey privKey = readPrivKeyFromFile();
+    Key secretKey = readSecretKeyFromFile();
     SecureRandom random = new SecureRandom();
-    cipher.init(Cipher.ENCRYPT_MODE, pubKey, random);
+    BufferedInputStream input;
 
-    // check size of file
-     byte[] cipherBlock = new byte[cipher.getBlockSize()]
-    // set size as # of blocks before partial block
-    for(int i = 0; i < size; i++){
-        cipherBlock = 2;
+    // initialize RSA
+    RSA.init(Cipher.ENCRYPT_MODE, privKey, random);
+    AES.init(Cipher.ENCRYPT_MODE, secretKey, random);
+
+    // Get the file
+    System.out.println("Input the file path and name of the file we will encrypt.");
+    Scanner kb = new Scanner(System.in);
+    Boolean found = true;
+    do{
+    try {
+         InputStream in =
+                new FileInputStream(kb.nextLine());
+        input = new BufferedInputStream(in);
+    } catch (IOException e) {
+        System.out.println("Error setting up input stream: try another path");
+        found = false;
     }
+    }while(!found);
+
+    // Hash the file - 1028 byte increment
+    Boolean buffered = false;
+    byte[] sha256;
+
+    while(input.available() > 1028){
+        hasher.update(input.readNBytes(1028));
+    }
+    if(input.available() > 0){
+        hasher.update(input.readAllBytes());
+        buffered = true;
+
+    }
+    sha256 = hasher.digest();
+
+    // Display Hash Value
+    System.out.println("SHA-256 Value: ");
+    for (int i=0, j=0; i< sha256.length; i++, j++) {
+      System.out.format("%2X ", sha256[i]) ;
+      if (j >= 15) {
+        System.out.println("");
+        j=-1;
+      }
+    }
+    System.out.println("");
+
+
+
+    // V V V V V V V V V V V V V V TO-DO V V V V V V V V V V V V V V V V V
+    int block_size = RSA.getBlockSize();
+     byte[] cipherBlock = new byte[block_size];
+   
 
     // finalize last block
-    byte[] cipherText = cipher.doFinal(input);
+    byte[] cipherText = RSA.doFinal(input);
 
     // display ciphertext byte info
     System.out.println("cipherText: block size = " + cipher.getBlockSize());
@@ -45,66 +103,81 @@ public class Sender {
     System.out.println("");
   }
 
-// read input file - call 
+    // read input file - call
 
-  //read key parameters from a file and generate the public key 
-  public static PublicKey readPubKeyFromFile(String keyFileName) 
-      throws IOException {
+    // read key parameters from a file and generate the public key
+    public static PublicKey readPubKeyFromFile() throws IOException {
 
-    InputStream in = 
-        //Sender.class.getResourceAsStream(keyFileName);
-        new FileInputStream("./KeyGen/XRSAPublic.key");
-    ObjectInputStream oin =
-        new ObjectInputStream(new BufferedInputStream(in));
+        InputStream in =
+                // Sender.class.getResourceAsStream(keyFileName);
+                new FileInputStream("./KeyGen/XRSAPublic.key");
+        ObjectInputStream oin = new ObjectInputStream(new BufferedInputStream(in));
 
-    try {
-      BigInteger m = (BigInteger) oin.readObject();
-      BigInteger e = (BigInteger) oin.readObject();
+        try {
+            BigInteger m = (BigInteger) oin.readObject();
+            BigInteger e = (BigInteger) oin.readObject();
 
-      System.out.println("Read from " + keyFileName + ": modulus = " + 
-          m.toString() + ", exponent = " + e.toString() + "\n");
+            System.out.println(
+                    "Read from XRSAPublic.key: modulus = " + m.toString() + ", exponent = " + e.toString() + "\n");
 
-      RSAPublicKeySpec keySpec = new RSAPublicKeySpec(m, e);
-      KeyFactory factory = KeyFactory.getInstance("RSA");
-      PublicKey key = factory.generatePublic(keySpec);
+            RSAPublicKeySpec keySpec = new RSAPublicKeySpec(m, e);
+            KeyFactory factory = KeyFactory.getInstance("RSA");
+            PublicKey key = factory.generatePublic(keySpec);
 
-      return key;
-    } catch (Exception e) {
-      throw new RuntimeException("Spurious serialisation error", e);
-    } finally {
-      oin.close();
+            return key;
+        } catch (Exception e) {
+            throw new RuntimeException("Spurious serialisation error", e);
+        } finally {
+            oin.close();
+        }
     }
-  }
 
+    // read key parameters from a file and generate the private key
+    public static PrivateKey readPrivKeyFromFile() throws IOException {
 
-  //read key parameters from a file and generate the private key 
-  public static PrivateKey readPrivKeyFromFile() 
-      throws IOException {
+        InputStream in =
+                // Sender.class.getResourceAsStream(keyFileName);
+                new FileInputStream("./KeyGen/XRSAPrivate.key");
+        ObjectInputStream oin = new ObjectInputStream(new BufferedInputStream(in));
 
-    InputStream in = 
-        //Sender.class.getResourceAsStream(keyFileName);
-        new FileInputStream("./KeyGen/XRSAPrivate.key");
-    ObjectInputStream oin =
-        new ObjectInputStream(new BufferedInputStream(in));
+        try {
+            BigInteger m = (BigInteger) oin.readObject();
+            BigInteger e = (BigInteger) oin.readObject();
 
-    try {
-      BigInteger m = (BigInteger) oin.readObject();
-      BigInteger e = (BigInteger) oin.readObject();
+            System.out.println(
+                    "Read from XRSAPrivate.key: modulus = " + m.toString() + ", exponent = " + e.toString() + "\n");
 
-      System.out.println("Read from Xprivate.key: modulus = " + 
-          m.toString() + ", exponent = " + e.toString() + "\n");
+            RSAPrivateKeySpec keySpec = new RSAPrivateKeySpec(m, e);
+            KeyFactory factory = KeyFactory.getInstance("RSA");
+            PrivateKey key = factory.generatePrivate(keySpec);
 
-      RSAPrivateKeySpec keySpec = new RSAPrivateKeySpec(m, e);
-      KeyFactory factory = KeyFactory.getInstance("RSA");
-      PrivateKey key = factory.generatePrivate(keySpec);
-
-      return key;
-    } catch (Exception e) {
-      throw new RuntimeException("Spurious serialisation error", e);
-    } finally {
-      oin.close();
+            return key;
+        } catch (Exception e) {
+            throw new RuntimeException("Spurious serialisation error", e);
+        } finally {
+            oin.close();
+        }
     }
-  }
 
+    public static void readSecretKeyFromFile(){
+        InputStream in =
+                new FileInputStream("./KeyGen/AESSecret.key");
+        try {
+            byte[] privateKey = in.readAllBytes();
+
+            System.out.println(
+                    "Read from AESSecret.key: " + privateKey.toString() + "\n");
+
+            KeySpec keySpec = new KeySpec();
+            KeyFactory factory = KeyFactory.getInstance("AES");
+            Key key = factory.;
+
+            return key;
+        } catch (Exception e) {
+            throw new RuntimeException("Spurious serialisation error", e);
+        } finally {
+            oin.close();
+        }
+    }
 
 }
