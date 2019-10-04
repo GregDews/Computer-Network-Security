@@ -1,9 +1,13 @@
 /*
 Greg Dews &
 Jeff Walto
-To-Do
-    AES encryption on (RSA-(SHA256(M))//M) aka message.ds-msg -> message.aescipher
-    ((I know that this is not exactly secure, but for the sake of this class it works.))
+
+***Issues***
+    Despite pulling file data and creating AES specific key, the key is not the right size...
+        Invalid AES Key Length: 128 (line 40 - currently)
+        Possibly due to encoding of text. File appears to be the right size, though. Perhaps my array init?
+    Can't run files in expected folders in my VSCode. "Main not found"
+***TO-DO***
     test run, check that everything works.
 */
 
@@ -24,7 +28,7 @@ public class Sender {
 
         // Get Ciphers/Hasher/keys
         Cipher RSA = Cipher.getInstance("RSA/ECB/PKCS1Padding");
-        Cipher AES = Cipher.getInstance("AES/ECB/PKCS1Padding");
+        Cipher AES = Cipher.getInstance("AES/ECB/PKCS5Padding");
         MessageDigest hasher = MessageDigest.getInstance("SHA-256");
         PrivateKey privKey = readPrivKeyFromFile();
         Key secretKey = readSecretKeyFromFile();
@@ -120,8 +124,8 @@ public class Sender {
     public static PrivateKey readPrivKeyFromFile() throws IOException {
 
         InputStream in =
-                // Sender.class.getResourceAsStream(keyFileName);
-                new FileInputStream("./KeyGen/XRSAPrivate.key");
+                //new FileInputStream("./KeyGen/XRSAPrivate.key");
+                new FileInputStream("XRSAPrivate.key");
         ObjectInputStream oin = new ObjectInputStream(new BufferedInputStream(in));
 
         try {
@@ -146,7 +150,8 @@ public class Sender {
     // Reads AESSecret.key, returns a key
     public static Key readSecretKeyFromFile() {
         byte[] storedkey = new byte[128];
-        try (FileInputStream reader = new FileInputStream("./KeyGen/symmetric.key")) {
+        //try (FileInputStream reader = new FileInputStream("./KeyGen/symmetric.key")) {
+        try (FileInputStream reader = new FileInputStream("symmetric.key")) {
             reader.read(storedkey);
         } catch (Exception e) {
             throw new RuntimeException("Ya done messed up!", e);
