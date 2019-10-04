@@ -6,6 +6,27 @@
     "configurations": [
         {
             "type": "java",
+            "name": "CodeLens (Launch) - KeyGeneration",
+            "request": "launch",
+            "mainClass": "KeyGen.KeyGeneration",
+            "projectName": "Computer-Network-Security_ee7f253e"
+        },
+        {
+            "type": "java",
+            "name": "CodeLens (Launch) - KeyGeneration",
+            "request": "launch",
+            "mainClass": "KeyGeneration",
+            "projectName": "KeyGen"
+        },
+        {
+            "type": "java",
+            "name": "CodeLens (Launch) - Sender",
+            "request": "launch",
+            "mainClass": "Sender",
+            "projectName": "Sender"
+        },
+        {
+            "type": "java",
             "name": "Debug (Launch) - Current File",
             "request": "launch",
             "mainClass": "${file}"

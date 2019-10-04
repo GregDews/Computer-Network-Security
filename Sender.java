@@ -1,5 +1,3 @@
-package Sender;
-
 /*
 Greg Dews &
 Jeff Walto
