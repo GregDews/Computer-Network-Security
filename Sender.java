@@ -147,7 +147,7 @@ public class Sender {
     // Reads AESSecret.key, returns a key
     public static Key readSecretKeyFromFile() {
         byte[] storedkey = new byte[128];
-        try (FileInputStream reader = new FileInputStream("./KeyGen/AESSecret.key")) {
+        try (FileInputStream reader = new FileInputStream("./KeyGen/symmetric.key")) {
             reader.read(storedkey);
         } catch (Exception e) {
             throw new RuntimeException("Ya done messed up!", e);
