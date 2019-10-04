@@ -32,7 +32,7 @@ public class Sender {
         SecureRandom random = new SecureRandom();
         BufferedInputStream input;
 
-        // initialize RSA
+        // initialize RSA/AES
         RSA.init(Cipher.ENCRYPT_MODE, privKey, random);
         AES.init(Cipher.ENCRYPT_MODE, secretKey, random);
 
@@ -107,7 +107,7 @@ public class Sender {
                 writer.write(temp);
             }
             // handle last block with exact size array
-            if(reader.available() > 0){
+            if (reader.available() > 0) {
                 temp = new byte[reader.available()];
                 reader.read(temp);
                 temp = AES.doFinal(temp);
@@ -144,6 +144,7 @@ public class Sender {
         }
     }
 
+    // Reads AESSecret.key, returns a key
     public static Key readSecretKeyFromFile() {
         byte[] storedkey = new byte[128];
         try (FileInputStream reader = new FileInputStream("./KeyGen/AESSecret.key")) {
