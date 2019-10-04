@@ -33,31 +33,22 @@ public class Sender {
     Cipher AES = Cipher.getInstance("AES/ECB/PKCS1Padding");
     MessageDigest hasher = MessageDigest.getInstance("SHA-256");
     PrivateKey privKey = readPrivKeyFromFile();
-    Key secretKey = readSecretKeyFromFile();
+    //Key secretKey = readSecretKeyFromFile();
     SecureRandom random = new SecureRandom();
     BufferedInputStream input;
 
     // initialize RSA
     RSA.init(Cipher.ENCRYPT_MODE, privKey, random);
-    AES.init(Cipher.ENCRYPT_MODE, secretKey, random);
+    //AES.init(Cipher.ENCRYPT_MODE, secretKey, random);
 
     // Get the file
     System.out.println("Input the file path and name of the file we will encrypt.");
     Scanner kb = new Scanner(System.in);
-    Boolean found = true;
-    do{
-    try {
-         InputStream in =
-                new FileInputStream(kb.nextLine());
-        input = new BufferedInputStream(in);
-    } catch (IOException e) {
-        System.out.println("Error setting up input stream: try another path");
-        found = false;
-    }
-    }while(!found);
+    InputStream in = new FileInputStream(kb.nextLine());
+    input = new BufferedInputStream(in);
+    kb.close();
 
     // Hash the file - 1028 byte increment
-    Boolean buffered = false;
     byte[] sha256;
 
     while(input.available() > 1028){
@@ -65,8 +56,6 @@ public class Sender {
     }
     if(input.available() > 0){
         hasher.update(input.readAllBytes());
-        buffered = true;
-
     }
     sha256 = hasher.digest();
 
@@ -82,9 +71,12 @@ public class Sender {
     System.out.println("");
 
     // append message to end of sha256 hash
-    
+    try (Writer writer = new BufferedWriter(new OutputStreamWriter(
+            new FileOutputStream("symmetric.key")))) {
+            writer.write("filler");
+        }
 
-    // V V V V V V V V V V V V V V TO-DO V V V V V V V V V V V V V V V V V
+    /* V V V V V V V V V V V V V V TO-DO V V V V V V V V V V V V V V V V V
     int block_size = RSA.getBlockSize();
      byte[] cipherBlock = new byte[block_size];
    
@@ -132,7 +124,10 @@ public class Sender {
             oin.close();
         }
     }
-
+*/
+input.close();
+in.close();
+}
     // read key parameters from a file and generate the private key
     public static PrivateKey readPrivKeyFromFile() throws IOException {
 
@@ -159,7 +154,7 @@ public class Sender {
             oin.close();
         }
     }
-
+/*
     public static void readSecretKeyFromFile(){
         InputStream in =
                 new FileInputStream("./KeyGen/AESSecret.key");
@@ -180,5 +175,5 @@ public class Sender {
             oin.close();
         }
     }
-
+*/
 }
