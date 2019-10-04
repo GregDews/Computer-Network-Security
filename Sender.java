@@ -81,7 +81,8 @@ public class Sender {
     }
     System.out.println("");
 
-
+    // append message to end of sha256 hash
+    
 
     // V V V V V V V V V V V V V V TO-DO V V V V V V V V V V V V V V V V V
     int block_size = RSA.getBlockSize();
