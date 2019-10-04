@@ -55,7 +55,7 @@ public class Sender {
         input.close();
         in.close();
         sha256 = hasher.digest();
-        try (FileOutputStream writer = new FileOutputStream("message.dd", true)) {
+        try (FileOutputStream writer = new FileOutputStream("message.dd")) {
             writer.write(sha256);
         }
 
@@ -72,7 +72,7 @@ public class Sender {
 
         // RSA the hash value output message.ds-msg
         byte[] cipherHash = RSA.doFinal(sha256);
-        try (FileOutputStream writer = new FileOutputStream("message.ds-msg", true)) {
+        try (FileOutputStream writer = new FileOutputStream("message.ds-msg")) {
             writer.write(cipherHash);
         }
 
@@ -97,12 +97,25 @@ public class Sender {
             }
         }
 
-//     V V V V V V V V V V V V V V TO-DO V V V V V V V V V V V V V V V V V
-
         // encrypt DS//M with AES and store in message.aescipher
-        
+        try (FileInputStream reader = new FileInputStream("message.ds-msg");
+                FileOutputStream writer = new FileOutputStream("message.aescipher")) {
+            byte[] temp = new byte[64];
+            while (reader.available() > 64) {
+                reader.read(temp);
+                temp = AES.update(temp);
+                writer.write(temp);
+            }
+            // handle last block with exact size array
+            if(reader.available() > 0){
+                temp = new byte[reader.available()];
+                reader.read(temp);
+                temp = AES.doFinal(temp);
+                writer.write(temp);
+            }
+        }
 
-    }
+    } // end of Sender Class
 
     // read key parameters from a file and generate the private key
     public static PrivateKey readPrivKeyFromFile() throws IOException {
