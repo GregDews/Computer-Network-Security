@@ -1,3 +1,4 @@
+package Sender;
 /*
 Greg Dews &
 Jeff Walto
@@ -16,6 +17,7 @@ import java.math.BigInteger;
 import java.security.Key;
 import java.security.MessageDigest;
 import java.security.PrivateKey;
+import javax.crypto.SecretKey;
 import java.security.SecureRandom;
 import java.security.KeyFactory;
 import java.security.spec.RSAPrivateKeySpec;
@@ -31,7 +33,7 @@ public class Sender {
         Cipher AES = Cipher.getInstance("AES/ECB/PKCS5Padding");
         MessageDigest hasher = MessageDigest.getInstance("SHA-256");
         PrivateKey privKey = readPrivKeyFromFile();
-        Key secretKey = readSecretKeyFromFile();
+        SecretKey secretKey = readSecretKeyFromFile();
         SecureRandom random = new SecureRandom();
         BufferedInputStream input;
 
@@ -124,7 +126,7 @@ public class Sender {
     public static PrivateKey readPrivKeyFromFile() throws IOException {
 
         InputStream in =
-                //new FileInputStream("./KeyGen/XRSAPrivate.key");
+                // new FileInputStream("./KeyGen/XRSAPrivate.key");
                 new FileInputStream("XRSAPrivate.key");
         ObjectInputStream oin = new ObjectInputStream(new BufferedInputStream(in));
 
@@ -150,13 +152,14 @@ public class Sender {
     // Reads AESSecret.key, returns a key
     public static Key readSecretKeyFromFile() {
         byte[] storedkey = new byte[128];
-        //try (FileInputStream reader = new FileInputStream("./KeyGen/symmetric.key")) {
+        // try (FileInputStream reader = new FileInputStream("./KeyGen/symmetric.key"))
+        // {
         try (FileInputStream reader = new FileInputStream("symmetric.key")) {
             reader.read(storedkey);
         } catch (Exception e) {
             throw new RuntimeException("Ya done messed up!", e);
         }
-        Key symKey = new SecretKeySpec(storedkey, "AES");
+        SecretKey symKey = new SecretKeySpec(storedkey, "AES");
         return symKey;
     }
 }
