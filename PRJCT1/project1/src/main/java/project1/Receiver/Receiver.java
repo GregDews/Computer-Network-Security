@@ -4,7 +4,8 @@ Greg Dews &
 Jeff Walto
 
 ***Issues***
-    Can't run files in expected folders in my VSCode. "Main not found"
+    not separating message from message.ds-msg correctly
+    Example: calculated has is incorrect, provided hash is correct
 ***TO-DO***
     test run, check that everything works.
 */
@@ -55,23 +56,28 @@ public class Receiver {
                 writer.write(AES.doFinal(temp));
             }
         }
-        
+
         // remove provided digital signature from message.ds-msg
-        byte[] digitalSignature;
+        byte[] digitalSignature = new byte[128];
+        byte[] mbuf = new byte[1024];
         try (FileInputStream reader = new FileInputStream("newmessage.ds-msg");
                 FileOutputStream writer = new FileOutputStream("newmessage.msg")) {
-            digitalSignature = new byte[128];
-            reader.readNBytes(digitalSignature,0,128);
-            byte[] temp = new byte[1024];
-            while (reader.available() > 0) {
-                reader.read(temp);
-                writer.write(temp);
+            reader.readNBytes(digitalSignature, 0, 128);
+            while (reader.available() > 1024) {
+                mbuf = reader.readNBytes(1024);
+                hasher.update(mbuf);
+                writer.write(mbuf);
+            }
+            int last = reader.available();
+            if ( last > 0) {
+                byte[] mbuf2 = reader.readAllBytes();
+                hasher.update(mbuf2);
+                writer.write(mbuf2);
             }
         }
         try (FileOutputStream writer = new FileOutputStream("newmessage.ds")) {
             writer.write(digitalSignature);
         }
-
 
         // RSA the Digital Signature
         try (FileInputStream reader = new FileInputStream("newmessage.ds");
@@ -79,7 +85,7 @@ public class Receiver {
             byte[] temp = new byte[16];
             while (reader.available() > 16) {
                 temp = reader.readNBytes(16);
-                writer.write(RSA.doFinal(temp));
+                writer.write(RSA.update(temp));
             }
             // handle last block with exact size array
             if (reader.available() > 0) {
@@ -90,7 +96,7 @@ public class Receiver {
         }
         // Display Digital Digest
         System.out.println("Provided Value: ");
-        byte[] providedHash= new byte[128];
+        byte[] providedHash = new byte[32];
         try (FileInputStream reader = new FileInputStream("newmessage.dd")) {
             reader.read(providedHash);
         }
@@ -106,13 +112,11 @@ public class Receiver {
         // Hash the file - 1024 byte increment
         byte[] sha256;
         try (FileInputStream reader = new FileInputStream("newmessage.msg")) {
-            byte[] temp2 = new byte[1024];
-            while (reader.available() > 0) {
-                reader.read(temp2);
-                hasher.update(temp2);
+            while (reader.available() > 1024) {
+                hasher.update(reader.readNBytes(1024));
             }
             if (reader.available() > 0) {
-            hasher.update(reader.readAllBytes());
+                hasher.update(reader.readAllBytes());
             }
         }
         sha256 = hasher.digest();
@@ -129,20 +133,19 @@ public class Receiver {
         System.out.println("");
 
         // compare provided hash with calculated hash (sha256)
-        if (sha256.equals(providedHash)){
+        if (sha256.equals(providedHash)) {
             System.out.println("Signature Verified");
-        } else{
+        } else {
             System.out.println("Signature Invalid");
         }
 
-
-    } // end of Sender Class
+    } // end of Receiver Class
 
     // read key parameters from a file and generate the public key
     public static PublicKey readPubKeyFromFile() throws IOException {
 
         InputStream in =
-                //new FileInputStream("./KeyGen/XRSAPublic.key");
+                // new FileInputStream("./KeyGen/XRSAPublic.key");
                 new FileInputStream("XRSAPublic.key");
         ObjectInputStream oin = new ObjectInputStream(new BufferedInputStream(in));
 

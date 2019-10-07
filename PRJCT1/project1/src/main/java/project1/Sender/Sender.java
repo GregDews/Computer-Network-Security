@@ -77,17 +77,17 @@ public class Sender {
         // RSA the hash value output message.ds-msg
         try (FileInputStream reader = new FileInputStream("message.dd");
             FileOutputStream writer = new FileOutputStream("message.ds-msg")) {
-            // from Jay Sridhar of novixys.com
-            byte[] ibuf = new byte[1024];
-            int len;
-            while ((len = reader.read(ibuf)) != -1) {
-                byte[] obuf = RSA.update(ibuf, 0, len);
-                if (obuf != null)
-                    writer.write(obuf);
+            byte[] temp = new byte[16];
+            while (reader.available() > 16) {
+                temp = reader.readNBytes(16);
+                writer.write(RSA.update(temp));
             }
-            byte[] obuf = RSA.doFinal();
-            if (obuf != null)
-                writer.write(obuf);
+            // handle last block with exact size array
+            if (reader.available() > 0) {
+                temp = new byte[reader.available()];
+                reader.read(temp);
+                writer.write(RSA.doFinal(temp));
+            }
         }
 
         // Display Digital Signature
