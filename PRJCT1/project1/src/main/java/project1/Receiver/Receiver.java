@@ -14,7 +14,6 @@ import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.PublicKey;
 import javax.crypto.SecretKey;
-import java.security.SecureRandom;
 import java.security.KeyFactory;
 import java.security.spec.RSAPublicKeySpec;
 import java.util.Scanner;
@@ -30,11 +29,10 @@ public class Receiver {
         MessageDigest hasher = MessageDigest.getInstance("SHA-256");
         PublicKey pubKey = readPubKeyFromFile();
         SecretKey secretKey = readSecretKeyFromFile();
-        SecureRandom random = new SecureRandom();
 
         // initialize RSA/AES
-        RSA.init(Cipher.ENCRYPT_MODE, pubKey, random);
-        AES.init(Cipher.ENCRYPT_MODE, secretKey, random);
+        RSA.init(Cipher.DECRYPT_MODE, pubKey);
+        AES.init(Cipher.DECRYPT_MODE, secretKey);
 
         // Get the file
         System.out.println("Input the file path and name of the file we will decrypt.");
@@ -45,9 +43,9 @@ public class Receiver {
         // decrypt DS//M with AES and store in message.ds-msg
         try (FileInputStream reader = new FileInputStream(M);
                 FileOutputStream writer = new FileOutputStream("newmessage.ds-msg")) {
-            byte[] temp = new byte[16];
-            while (reader.available() > 16) {
-                temp = reader.readNBytes(16);
+            byte[] temp = new byte[64];
+            while (reader.available() > 64) {
+                temp = reader.readNBytes(64);
                 writer.write(AES.update(temp));
             }
             // handle last block with exact size array
@@ -77,20 +75,19 @@ public class Receiver {
 
         // RSA the Digital Signature
         try (FileInputStream reader = new FileInputStream("newmessage.ds");
-            FileOutputStream writer = new FileOutputStream("newmessage.dd")) {
-            // from Jay Sridhar of novixys.com
-            byte[] ibuf = new byte[1024];
-            int len;
-            while ((len = reader.read(ibuf)) != -1) {
-                byte[] obuf = RSA.doFinal(ibuf, 0, len);
-                if (obuf != null)
-                    writer.write(obuf);
+                FileOutputStream writer = new FileOutputStream("newmessage.dd")) {
+            byte[] temp = new byte[16];
+            while (reader.available() > 16) {
+                temp = reader.readNBytes(16);
+                writer.write(RSA.doFinal(temp));
             }
-            byte[] obuf = RSA.doFinal();
-            if (obuf != null)
-                writer.write(obuf);
+            // handle last block with exact size array
+            if (reader.available() > 0) {
+                temp = new byte[reader.available()];
+                reader.read(temp);
+                writer.write(RSA.doFinal(temp));
+            }
         }
-
         // Display Digital Digest
         System.out.println("Provided Value: ");
         byte[] providedHash= new byte[128];

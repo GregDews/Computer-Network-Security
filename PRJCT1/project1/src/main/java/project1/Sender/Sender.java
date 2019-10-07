@@ -118,8 +118,8 @@ public class Sender {
         // encrypt DS//M with AES and store in message.aescipher
         try (FileInputStream reader = new FileInputStream("message.ds-msg");
                 FileOutputStream writer = new FileOutputStream("message.aescipher")) {
-            byte[] temp = new byte[16];
-            while (reader.available() > 15) {
+            byte[] temp = new byte[64];
+            while (reader.available() > 64) {
                 reader.read(temp);
                 temp = AES.update(temp);
                 writer.write(temp);
