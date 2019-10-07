@@ -1,3 +1,4 @@
+package project1.Receiver;
 /*
 Greg Dews &
 Jeff Walto
@@ -10,7 +11,6 @@ Jeff Walto
 
 import java.io.*;
 import java.math.BigInteger;
-import java.security.Key;
 import java.security.MessageDigest;
 import java.security.PublicKey;
 import javax.crypto.SecretKey;
@@ -21,7 +21,7 @@ import java.util.Scanner;
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
 
-public class Sender {
+public class Receiver {
     public static void main(String[] args) throws Exception {
 
         // Get Ciphers/Hasher/keys
@@ -31,7 +31,6 @@ public class Sender {
         PublicKey pubKey = readPubKeyFromFile();
         SecretKey secretKey = readSecretKeyFromFile();
         SecureRandom random = new SecureRandom();
-        BufferedInputStream input;
 
         // initialize RSA/AES
         RSA.init(Cipher.ENCRYPT_MODE, pubKey, random);
@@ -41,47 +40,63 @@ public class Sender {
         System.out.println("Input the file path and name of the file we will decrypt.");
         Scanner kb = new Scanner(System.in);
         File M = new File(kb.nextLine());
-        InputStream in = new FileInputStream(M);
-        input = new BufferedInputStream(in);
         kb.close();
 
         // decrypt DS//M with AES and store in message.ds-msg
         try (FileInputStream reader = new FileInputStream(M);
-                FileOutputStream writer = new FileOutputStream("message.ds-msg")) {
-            byte[] temp = new byte[1028];
-            while (reader.available() > 1028) {
-                reader.read(temp);
-                temp = AES.update(temp);
-                writer.write(temp);
+                FileOutputStream writer = new FileOutputStream("newmessage.ds-msg")) {
+            byte[] temp = new byte[16];
+            while (reader.available() > 16) {
+                temp = reader.readNBytes(16);
+                writer.write(AES.update(temp));
             }
             // handle last block with exact size array
             if (reader.available() > 0) {
                 temp = new byte[reader.available()];
                 reader.read(temp);
-                temp = AES.doFinal(temp);
-                writer.write(temp);
+                writer.write(AES.doFinal(temp));
             }
         }
         
         // remove provided digital signature from message.ds-msg
-        byte[] sha1 = [0];
-        try (FileInputStream reader = new FileInputStream("message.ds-msg");
-                FileOutputStream writer = new FileOutputStream("message.msg")) {
-            digitalSignature = new byte[64];
-            reader.readNBytes(digitalSignature,0,64);
-            byte[] temp = new byte[1028];
+        byte[] digitalSignature;
+        try (FileInputStream reader = new FileInputStream("newmessage.ds-msg");
+                FileOutputStream writer = new FileOutputStream("newmessage.msg")) {
+            digitalSignature = new byte[128];
+            reader.readNBytes(digitalSignature,0,128);
+            byte[] temp = new byte[1024];
             while (reader.available() > 0) {
                 reader.read(temp);
                 writer.write(temp);
             }
         }
+        try (FileOutputStream writer = new FileOutputStream("newmessage.ds")) {
+            writer.write(digitalSignature);
+        }
+
 
         // RSA the Digital Signature
-        byte[] providedHash = RSA.doFinal(digitalSignature);
-        
+        try (FileInputStream reader = new FileInputStream("newmessage.ds");
+            FileOutputStream writer = new FileOutputStream("newmessage.dd")) {
+            // from Jay Sridhar of novixys.com
+            byte[] ibuf = new byte[1024];
+            int len;
+            while ((len = reader.read(ibuf)) != -1) {
+                byte[] obuf = RSA.doFinal(ibuf, 0, len);
+                if (obuf != null)
+                    writer.write(obuf);
+            }
+            byte[] obuf = RSA.doFinal();
+            if (obuf != null)
+                writer.write(obuf);
+        }
 
-        // Display Digital Signature
-        System.out.println("Provided Hash Value: ");
+        // Display Digital Digest
+        System.out.println("Provided Value: ");
+        byte[] providedHash= new byte[128];
+        try (FileInputStream reader = new FileInputStream("newmessage.dd")) {
+            reader.read(providedHash);
+        }
         for (int i = 0, j = 0; i < providedHash.length; i++, j++) {
             System.out.format("%2X ", providedHash[i]);
             if (j >= 15) {
@@ -91,13 +106,13 @@ public class Sender {
         }
         System.out.println("");
 
-        // Hash the file - 1028 byte increment
+        // Hash the file - 1024 byte increment
         byte[] sha256;
-        try (FileInputStream reader = new FileInputStream("message.msg")) {
-            byte[] temp = new byte[1028];
+        try (FileInputStream reader = new FileInputStream("newmessage.msg")) {
+            byte[] temp2 = new byte[1024];
             while (reader.available() > 0) {
-                reader.read(temp);
-                hasher.update(temp);
+                reader.read(temp2);
+                hasher.update(temp2);
             }
             if (reader.available() > 0) {
             hasher.update(reader.readAllBytes());
@@ -130,8 +145,8 @@ public class Sender {
     public static PublicKey readPubKeyFromFile() throws IOException {
 
         InputStream in =
-                 new FileInputStream("./KeyGen/XRSAPublic.key");
-                //new FileInputStream("XRSAPublic.key");
+                //new FileInputStream("./KeyGen/XRSAPublic.key");
+                new FileInputStream("XRSAPublic.key");
         ObjectInputStream oin = new ObjectInputStream(new BufferedInputStream(in));
 
         try {
@@ -155,7 +170,7 @@ public class Sender {
 
     // Reads AESSecret.key, returns a key
     public static SecretKey readSecretKeyFromFile() {
-        byte[] storedkey = new byte[128];
+        byte[] storedkey = new byte[16];
         // try (FileInputStream reader = new FileInputStream("./KeyGen/symmetric.key"))
         // {
         try (FileInputStream reader = new FileInputStream("symmetric.key")) {

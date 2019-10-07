@@ -6,6 +6,27 @@
     "configurations": [
         {
             "type": "java",
+            "name": "CodeLens (Launch) - Receiver",
+            "request": "launch",
+            "mainClass": "project1.Receiver.Receiver",
+            "projectName": "project1"
+        },
+        {
+            "type": "java",
+            "name": "CodeLens (Launch) - Sender",
+            "request": "launch",
+            "mainClass": "project1.Sender.Sender",
+            "projectName": "project1"
+        },
+        {
+            "type": "java",
+            "name": "CodeLens (Launch) - KeyGeneration",
+            "request": "launch",
+            "mainClass": "project1.KeyGen.KeyGeneration",
+            "projectName": "project1"
+        },
+        {
+            "type": "java",
             "name": "CodeLens (Launch) - Sender",
             "request": "launch",
             "mainClass": "Sender.Sender",
