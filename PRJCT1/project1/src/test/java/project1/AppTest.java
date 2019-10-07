@@ -1,4 +1,4 @@
-package JnG;
+package project1;
 
 import org.junit.Test;
 
