@@ -29,6 +29,24 @@
             "type": "java",
             "name": "CodeLens (Launch) - Sender",
             "request": "launch",
+            "mainClass": "Sender"
+        },
+        {
+            "type": "java",
+            "name": "CodeLens (Launch) - Sender",
+            "request": "launch",
+            "mainClass": "Sender.Sender"
+        },
+        {
+            "type": "java",
+            "name": "CodeLens (Launch) - KeyGeneration",
+            "request": "launch",
+            "mainClass": "KeyGeneration"
+        },
+        {
+            "type": "java",
+            "name": "CodeLens (Launch) - Sender",
+            "request": "launch",
             "mainClass": "Sender.Sender",
             "projectName": "Computer-Network-Security_ee7f253e"
         },
