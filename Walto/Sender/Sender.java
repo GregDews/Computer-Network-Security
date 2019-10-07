@@ -1,4 +1,4 @@
-package Sender;
+package project1.Sender;
 /*
 Greg Dews &
 Jeff Walto
@@ -14,7 +14,6 @@ Jeff Walto
 
 import java.io.*;
 import java.math.BigInteger;
-import java.security.Key;
 import java.security.MessageDigest;
 import java.security.PrivateKey;
 import javax.crypto.SecretKey;
@@ -51,8 +50,8 @@ public class Sender {
 
         // Hash the file - 1028 byte increment
         byte[] sha256;
-        while (input.available() > 1028) {
-            hasher.update(input.readNBytes(1028));
+        while (input.available() > 1024) {
+            hasher.update(input.readNBytes(1024));
         }
         if (input.available() > 0) {
             hasher.update(input.readAllBytes());
@@ -76,13 +75,27 @@ public class Sender {
         System.out.println("");
 
         // RSA the hash value output message.ds-msg
-        byte[] cipherHash = RSA.doFinal(sha256);
-        try (FileOutputStream writer = new FileOutputStream("message.ds-msg")) {
-            writer.write(cipherHash);
+        try (FileInputStream reader = new FileInputStream("message.dd");
+            FileOutputStream writer = new FileOutputStream("message.ds-msg")) {
+            // from Jay Sridhar of novixys.com
+            byte[] ibuf = new byte[1024];
+            int len;
+            while ((len = reader.read(ibuf)) != -1) {
+                byte[] obuf = RSA.update(ibuf, 0, len);
+                if (obuf != null)
+                    writer.write(obuf);
+            }
+            byte[] obuf = RSA.doFinal();
+            if (obuf != null)
+                writer.write(obuf);
         }
 
         // Display Digital Signature
         System.out.println("Digital Signature: ");
+        byte[] cipherHash = new byte[128];
+        try (FileInputStream reader = new FileInputStream("message.ds-msg")) {
+            reader.read(cipherHash);
+        }
         for (int i = 0, j = 0; i < cipherHash.length; i++, j++) {
             System.out.format("%2X ", cipherHash[i]);
             if (j >= 15) {
@@ -95,7 +108,7 @@ public class Sender {
         // append message to end of RSA(SHA256(M)) - message.ds-msg
         try (FileInputStream reader = new FileInputStream(M);
                 FileOutputStream writer = new FileOutputStream("message.ds-msg", true)) {
-            byte[] temp = new byte[1028];
+            byte[] temp = new byte[1024];
             while (reader.available() > 0) {
                 reader.read(temp);
                 writer.write(temp);
@@ -105,8 +118,8 @@ public class Sender {
         // encrypt DS//M with AES and store in message.aescipher
         try (FileInputStream reader = new FileInputStream("message.ds-msg");
                 FileOutputStream writer = new FileOutputStream("message.aescipher")) {
-            byte[] temp = new byte[64];
-            while (reader.available() > 64) {
+            byte[] temp = new byte[16];
+            while (reader.available() > 15) {
                 reader.read(temp);
                 temp = AES.update(temp);
                 writer.write(temp);
@@ -126,8 +139,8 @@ public class Sender {
     public static PrivateKey readPrivKeyFromFile() throws IOException {
 
         InputStream in =
-                new FileInputStream("./Walto/KeyGen/XRSAPrivate.key");
-                //new FileInputStream("XRSAPrivate.key");
+                // new FileInputStream("./KeyGen/XRSAPrivate.key");
+                new FileInputStream("XRSAPrivate.key");
         ObjectInputStream oin = new ObjectInputStream(new BufferedInputStream(in));
 
         try {
@@ -152,9 +165,9 @@ public class Sender {
     // Reads AESSecret.key, returns a key
     public static SecretKey readSecretKeyFromFile() {
         byte[] storedkey = new byte[16];
-         try (FileInputStream reader = new FileInputStream("./Walto/KeyGen/symmetric.key"))
-         {
-        //try (FileInputStream reader = new FileInputStream("symmetric.key")) {
+        // try (FileInputStream reader = new FileInputStream("./KeyGen/symmetric.key"))
+        // {
+        try (FileInputStream reader = new FileInputStream("symmetric.key")) {
             reader.read(storedkey);
         } catch (Exception e) {
             throw new RuntimeException("Ya done messed up!", e);
