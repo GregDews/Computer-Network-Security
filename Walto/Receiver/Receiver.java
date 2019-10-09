@@ -47,7 +47,7 @@ public class Receiver {
 
         // decrypt DS//M with AES and store in message.ds-msg
         try (FileInputStream reader = new FileInputStream(M);
-                FileOutputStream writer = new FileOutputStream("newmessage.ds-msg")) {
+                FileOutputStream writer = new FileOutputStream("message.ds-msg")) {
             byte[] temp = new byte[64];
             while (reader.available() > 64) {
                 temp = reader.readNBytes(64);
@@ -64,8 +64,8 @@ public class Receiver {
         // remove provided digital signature from message.ds-msg
         byte[] digitalSignature = new byte[128];
         byte[] mbuf = new byte[1024];
-        try (FileInputStream reader = new FileInputStream("newmessage.ds-msg");
-                FileOutputStream writer = new FileOutputStream("newmessage.msg")) {
+        try (FileInputStream reader = new FileInputStream("message.ds-msg");
+                FileOutputStream writer = new FileOutputStream("message.msg")) {
             reader.readNBytes(digitalSignature, 0, 128);
             while (reader.available() > 1024) {
                 mbuf = reader.readNBytes(1024);
@@ -77,13 +77,13 @@ public class Receiver {
                 writer.write(mbuf2);
             }
         }
-        try (FileOutputStream writer = new FileOutputStream("newmessage.ds")) {
+        try (FileOutputStream writer = new FileOutputStream("message.ds")) {
             writer.write(digitalSignature);
         }
 
         // RSA the Digital Signature
-        try (FileInputStream reader = new FileInputStream("newmessage.ds");
-                FileOutputStream writer = new FileOutputStream("newmessage.dd")) {
+        try (FileInputStream reader = new FileInputStream("message.ds");
+                FileOutputStream writer = new FileOutputStream("message.dd")) {
             byte[] temp = new byte[16];
             while (reader.available() > 16) {
                 temp = reader.readNBytes(16);
@@ -99,7 +99,7 @@ public class Receiver {
         // Display Digital Digest
         System.out.println("Provided Value: ");
         byte[] providedHash = new byte[32];
-        try (FileInputStream reader = new FileInputStream("newmessage.dd")) {
+        try (FileInputStream reader = new FileInputStream("message.dd")) {
             reader.read(providedHash);
         }
         for (int i = 0, j = 0; i < providedHash.length; i++, j++) {
@@ -113,7 +113,7 @@ public class Receiver {
 
         // Hash the file - 1024 byte increment
         byte[] sha256;
-        try (FileInputStream reader = new FileInputStream("newmessage.msg")) {
+        try (FileInputStream reader = new FileInputStream("message.msg")) {
             while (reader.available() > 1024) {
                 hasher.update(reader.readNBytes(1024));
             }
@@ -147,8 +147,8 @@ public class Receiver {
     public static PublicKey readPubKeyFromFile() throws IOException {
 
         InputStream in =
-                // new FileInputStream("./KeyGen/XRSAPublic.key");
-                new FileInputStream("XRSAPublic.key");
+                new FileInputStream("./KeyGen/XRSAPublic.key");
+                //new FileInputStream("XRSAPublic.key");
         ObjectInputStream oin = new ObjectInputStream(new BufferedInputStream(in));
 
         try {
@@ -173,9 +173,9 @@ public class Receiver {
     // Reads AESSecret.key, returns a key
     public static SecretKey readSecretKeyFromFile() {
         byte[] storedkey = new byte[16];
-        // try (FileInputStream reader = new FileInputStream("./KeyGen/symmetric.key"))
-        // {
-        try (FileInputStream reader = new FileInputStream("symmetric.key")) {
+         try (FileInputStream reader = new FileInputStream("./KeyGen/symmetric.key"))
+         {
+        //try (FileInputStream reader = new FileInputStream("symmetric.key")) {
             reader.read(storedkey);
         } catch (Exception e) {
             throw new RuntimeException("Ya done messed up!", e);
