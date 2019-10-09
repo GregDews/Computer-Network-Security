@@ -147,7 +147,7 @@ public class Receiver {
     public static PublicKey readPubKeyFromFile() throws IOException {
 
         InputStream in =
-                new FileInputStream("./KeyGen/XRSAPublic.key");
+                new FileInputStream("..//KeyGen//XRSAPublic.key");
                 //new FileInputStream("XRSAPublic.key");
         ObjectInputStream oin = new ObjectInputStream(new BufferedInputStream(in));
 
@@ -173,7 +173,7 @@ public class Receiver {
     // Reads AESSecret.key, returns a key
     public static SecretKey readSecretKeyFromFile() {
         byte[] storedkey = new byte[16];
-         try (FileInputStream reader = new FileInputStream("./KeyGen/symmetric.key"))
+         try (FileInputStream reader = new FileInputStream("..//KeyGen//symmetric.key"))
          {
         //try (FileInputStream reader = new FileInputStream("symmetric.key")) {
             reader.read(storedkey);
