@@ -3,13 +3,15 @@ package project1.Sender;
 Greg Dews &
 Jeff Walto
 
+Sender.java
+    Hardcoded to find keys in other (KeyGen) directory
+    
 ***Issues***
-    Despite pulling file data and creating AES specific key, the key is not the right size...
-        Invalid AES Key Length: 128 (line 40 - currently)
-        Possibly due to encoding of text. File appears to be the right size, though. Perhaps my array init?
-    Can't run files in expected folders in my VSCode. "Main not found"
+    None
+
 ***TO-DO***
-    test run, check that everything works.
+    Clean the code
+
 */
 
 import java.io.*;

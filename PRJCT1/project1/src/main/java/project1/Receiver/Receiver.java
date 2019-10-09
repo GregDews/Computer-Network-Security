@@ -3,11 +3,15 @@ package project1.Receiver;
 Greg Dews &
 Jeff Walto
 
+Receiver.java
+    Hardcoded to find keys in other (KeyGen) directory
+    Works in Reverse operation to Sender.java
+
 ***Issues***
-    not separating message from message.ds-msg correctly
-    Example: calculated has is incorrect, provided hash is correct
+    None
+    
 ***TO-DO***
-    test run, check that everything works.
+    Clean the code
 */
 
 import java.io.*;
