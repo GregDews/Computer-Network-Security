@@ -108,10 +108,14 @@ public class Sender {
         // append message to end of RSA(SHA256(M)) - message.ds-msg
         try (FileInputStream reader = new FileInputStream(M);
                 FileOutputStream writer = new FileOutputStream("message.ds-msg", true)) {
-            byte[] temp = new byte[1024];
+            byte[] chunk = new byte[1024];
             while (reader.available() > 0) {
-                reader.read(temp);
-                writer.write(temp);
+                int size = reader.read(chunk);
+                byte[] usefulBytes = new byte[size];
+                for(int i = 0; i < size; i++){
+                    usefulBytes[i] = chunk[i];
+                }
+                writer.write(usefulBytes);
             }
         }
 
