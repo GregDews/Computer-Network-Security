@@ -18,6 +18,7 @@ import javax.crypto.SecretKey;
 import java.security.KeyFactory;
 import java.security.spec.RSAPublicKeySpec;
 import java.util.Scanner;
+import java.util.Arrays;
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
 
@@ -65,13 +66,11 @@ public class Receiver {
             reader.readNBytes(digitalSignature, 0, 128);
             while (reader.available() > 1024) {
                 mbuf = reader.readNBytes(1024);
-                hasher.update(mbuf);
                 writer.write(mbuf);
             }
             int last = reader.available();
             if ( last > 0) {
                 byte[] mbuf2 = reader.readAllBytes();
-                hasher.update(mbuf2);
                 writer.write(mbuf2);
             }
         }
@@ -133,7 +132,7 @@ public class Receiver {
         System.out.println("");
 
         // compare provided hash with calculated hash (sha256)
-        if (sha256.equals(providedHash)) {
+        if (Arrays.equals(sha256, providedHash)) {
             System.out.println("Signature Verified");
         } else {
             System.out.println("Signature Invalid");
