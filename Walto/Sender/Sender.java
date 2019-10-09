@@ -1,15 +1,16 @@
-package project1.Sender;
 /*
 Greg Dews &
 Jeff Walto
 
+Sender.java
+    Hardcoded to find keys in other (KeyGen) directory
+    
 ***Issues***
-    Despite pulling file data and creating AES specific key, the key is not the right size...
-        Invalid AES Key Length: 128 (line 40 - currently)
-        Possibly due to encoding of text. File appears to be the right size, though. Perhaps my array init?
-    Can't run files in expected folders in my VSCode. "Main not found"
+    None
+
 ***TO-DO***
-    test run, check that everything works.
+    Clean the code
+
 */
 
 import java.io.*;
@@ -77,17 +78,17 @@ public class Sender {
         // RSA the hash value output message.ds-msg
         try (FileInputStream reader = new FileInputStream("message.dd");
             FileOutputStream writer = new FileOutputStream("message.ds-msg")) {
-            // from Jay Sridhar of novixys.com
-            byte[] ibuf = new byte[1024];
-            int len;
-            while ((len = reader.read(ibuf)) != -1) {
-                byte[] obuf = RSA.update(ibuf, 0, len);
-                if (obuf != null)
-                    writer.write(obuf);
+            byte[] temp = new byte[16];
+            while (reader.available() > 16) {
+                temp = reader.readNBytes(16);
+                writer.write(RSA.update(temp));
             }
-            byte[] obuf = RSA.doFinal();
-            if (obuf != null)
-                writer.write(obuf);
+            // handle last block with exact size array
+            if (reader.available() > 0) {
+                temp = new byte[reader.available()];
+                reader.read(temp);
+                writer.write(RSA.doFinal(temp));
+            }
         }
 
         // Display Digital Signature
@@ -108,18 +109,22 @@ public class Sender {
         // append message to end of RSA(SHA256(M)) - message.ds-msg
         try (FileInputStream reader = new FileInputStream(M);
                 FileOutputStream writer = new FileOutputStream("message.ds-msg", true)) {
-            byte[] temp = new byte[1024];
+            byte[] chunk = new byte[1024];
             while (reader.available() > 0) {
-                reader.read(temp);
-                writer.write(temp);
+                int size = reader.read(chunk);
+                byte[] usefulBytes = new byte[size];
+                for(int i = 0; i < size; i++){
+                    usefulBytes[i] = chunk[i];
+                }
+                writer.write(usefulBytes);
             }
         }
 
         // encrypt DS//M with AES and store in message.aescipher
         try (FileInputStream reader = new FileInputStream("message.ds-msg");
                 FileOutputStream writer = new FileOutputStream("message.aescipher")) {
-            byte[] temp = new byte[16];
-            while (reader.available() > 15) {
+            byte[] temp = new byte[64];
+            while (reader.available() > 64) {
                 reader.read(temp);
                 temp = AES.update(temp);
                 writer.write(temp);
