@@ -50,7 +50,7 @@ public class Receiver {
                 FileOutputStream writer = new FileOutputStream("message.ds-msg")) {
             byte[] temp = new byte[64];
             while (reader.available() > 64) {
-                temp = reader.readNBytes(64);
+                reader.read(temp, 0, 64);
                 writer.write(AES.update(temp));
             }
             // handle last block with exact size array
@@ -66,14 +66,15 @@ public class Receiver {
         byte[] mbuf = new byte[1024];
         try (FileInputStream reader = new FileInputStream("message.ds-msg");
                 FileOutputStream writer = new FileOutputStream("message.msg")) {
-            reader.readNBytes(digitalSignature, 0, 128);
+            reader.read(digitalSignature, 0, 128);
             while (reader.available() > 1024) {
-                mbuf = reader.readNBytes(1024);
+                reader.read(mbuf, 0, 1024);
                 writer.write(mbuf);
             }
             int last = reader.available();
             if ( last > 0) {
-                byte[] mbuf2 = reader.readAllBytes();
+                byte[] mbuf2 = new byte[last];
+		reader.read(mbuf2, 0, last);
                 writer.write(mbuf2);
             }
         }
@@ -86,7 +87,7 @@ public class Receiver {
                 FileOutputStream writer = new FileOutputStream("message.dd")) {
             byte[] temp = new byte[16];
             while (reader.available() > 16) {
-                temp = reader.readNBytes(16);
+                reader.read(temp, 0, 16);
                 writer.write(RSA.update(temp));
             }
             // handle last block with exact size array
@@ -113,12 +114,17 @@ public class Receiver {
 
         // Hash the file - 1024 byte increment
         byte[] sha256;
+	byte[] temporary = new byte[1024];
         try (FileInputStream reader = new FileInputStream("message.msg")) {
             while (reader.available() > 1024) {
-                hasher.update(reader.readNBytes(1024));
+		reader.read(temporary, 0,1024);
+                hasher.update(temporary);
             }
-            if (reader.available() > 0) {
-                hasher.update(reader.readAllBytes());
+	    int avail = reader.available();
+	    temporary = new byte[avail];
+            if (avail > 0) {
+		reader.read(temporary, 0, avail);
+                hasher.update(temporary);
             }
         }
         sha256 = hasher.digest();

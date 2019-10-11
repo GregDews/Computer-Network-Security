@@ -51,11 +51,16 @@ public class Sender {
 
         // Hash the file - 1028 byte increment
         byte[] sha256;
+	byte[] temporary = new byte[1024];
         while (input.available() > 1024) {
-            hasher.update(input.readNBytes(1024));
+	    input.read(temporary, 0, 1024);
+            hasher.update(temporary);
         }
-        if (input.available() > 0) {
-            hasher.update(input.readAllBytes());
+	int avail = input.available();
+	temporary = new byte[avail];
+        if (avail > 0) {
+	    input.read(temporary, 0, avail);
+            hasher.update(temporary);
         }
         input.close();
         in.close();
@@ -80,7 +85,7 @@ public class Sender {
             FileOutputStream writer = new FileOutputStream("message.ds-msg")) {
             byte[] temp = new byte[16];
             while (reader.available() > 16) {
-                temp = reader.readNBytes(16);
+                reader.read(temp, 0, 16);
                 writer.write(RSA.update(temp));
             }
             // handle last block with exact size array
@@ -122,7 +127,7 @@ public class Sender {
 
         // encrypt DS//M with AES and store in message.aescipher
         try (FileInputStream reader = new FileInputStream("message.ds-msg");
-                FileOutputStream writer = new FileOutputStream("message.aescipher")) {
+                FileOutputStream writer = new FileOutputStream("..//Receiver//message.aescipher")) {
             byte[] temp = new byte[64];
             while (reader.available() > 64) {
                 reader.read(temp);
