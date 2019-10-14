@@ -1,0 +1,41 @@
+Access control
+    basic elements
+        subject - entity capable of accessing objects
+            user/application is representedted by a process to gain access to an object
+            often define three classes: owner, group, world(other)
+        object - resource ot which access is controlled
+            used to contain / recieve information
+            files, ports, data, programs, etc
+        access right - descrives the way in which a subject may access an object
+            read/write(including read), execute, delete, create, search(ls)
+
+    Discretionary Access Control (DAC)
+        scheme in which an entity may enable another entity to access some resource
+    
+        Access Matrix (Objects x User) each element has bits for rights
+            could be database, linked list, 2d array, different ways to implement
+
+            Access Control List (ACLs)
+                linked list of subjects for each file
+                may contain a default but must follow least power or read only
+            Capability tickets
+                each user has a list of objects and their rights
+            Authorization Table for Files
+                more convenient than ACLs
+                one row for one access right of one subject on one object
+
+        General Logic Model
+            protection state
+                set of information that specifies the access rights for each subject with respect to each object
+                allows subjects to alter the protection state in certain ways
+
+                Processes - access rights include the ability to delete a process, stop(block), wake up
+                Devices - Access rights include ability to read/write the device, control it's operation
+                Memory locations and regions - certain areas are protected from read/write form certain users
+                Subjects - ability to grant or delete access rights for self or other subjects
+            
+        Access Control Function
+            every acces by a subject to an object is mediated bu the controller for that object
+            Access matrix monitor handles access control and modification of access matrix
+                responds with rights for requested subject and object
+                Set of rules are defined in an Access Control System
