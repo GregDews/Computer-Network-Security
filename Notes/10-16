@@ -1,0 +1,55 @@
+Resuming from last of 10-14 - Access Control Function
+Still covering something that is much more OS based than we would need to worry about just yet
+    Could be useful to know before I take OS
+
+exercise is going through how the access control monitor takes a request and checks in the matrix
+Previous statement by teacher was that it returns a boolean, but Zhu changed her mind
+    that it is just a read of the matrix, not a calculation for the monitor.
+Notes are too thorough today, but I feel like I need to keep typing because the exercise is on the
+    verge of rudimentary.
+    step 1. receive command
+    step 2. check rules
+    step 3. review matrix if rule is acceptable
+    step 4. change or don't change the table
+    step 5. slam face on desk
+
+subjects and objects are quasi-interchangeable
+    pay mind to what you are needing to request
+
+*side note* I should get a spell checker for my txt files. If this keeps up, people will
+    know just how bad my spelling really is.
+
+Homework - don't have to redraw the table each time, just show the part that is changed
+    ex:
+    if row is deleted, draw the row, line through it
+    if column changed, draw the column and change the data as needed
+    if one cell, draw the cell and label left side (S_i) and top (S/F/P_i)
+        be sure to write the change out: "delete 'stop' from A[S3,P1]"
+
+Moving onto another example that is described as "simple" - handling alpha-asterisk
+    I fear these examples are taking up most of the class time. That and the lengthy explanations to
+    student questions: After the question is already answered, the explanation continues
+alpha-asterisk requests only play a role in the 5 field requests to matrix monitor
+
+Protection Domains
+    for access matrix, row is protection Domain
+    association between process and user can be static or dynamic
+        a process may execute a sequence of procedures each requiring different rights
+    user program executing in user mode makes a system call that is run in system mode
+    
+Basics and application of UNIX files and Directories
+    files are administered using inodes (index nodes)
+        control structure with key information for each file
+        links? softlink and hardlink
+        active inode is associated with exactly one file
+        attributes, permissions, control info is sorted in inode
+        disk has inode table, or inode list
+        when file is open, inode is brought into main memory
+    directories are structured in a hierarchical tree
+        directory is a file, with an inode
+        contains file names and pointers to these 
+
+traditional UNIX File Access Control
+    file is owned by the user who creates it and belongs to a specific group
+    minimal access control list (set of 12 protection bits)
+    

@@ -1,0 +1,17 @@
+
+
+5)
+    2.8 What are the principal ingredients of a public-key cryptosystem? 
+    2.10 What is the difference between a private key and a secret key? 
+    2.11 What is a digital signature? 2.12 What is a public-key certificate? 
+    2.13 How can public-key encryption be used to distribute a secret key?
+
+    Problem A(based on 2/E Textbook, Page 104, 3.5)A phonetic password generator picks two segments randomly for each six-letter password. The form of each segment is CVC (consonant, vowel, consonant), where V =<a, e, i, o, u>and C = 
+    a. What is the total password population? 
+    b. What is the probability of an adversary guessing a password correctly(use scientific annotation and keep 3 significant digits)
+
+    Problem B(based on Textbook, Page 104, 3.6)Assume that passwords are limited to the use of the 95 printable ASCII characters and that all passwords are 10 characters in length. Assume a password cracker with an encryption rate of 6.4 million encryptions per second. 
+    How long will it take to test exhaustively all possible passwords ona UNIX system(unit: years)?
+    (Hint: To keep it simple, just assumed that (1) the salt is either not used or for one given hashed password with the given salt; (2) one encryption means run the hash routine once.)
+
+    
