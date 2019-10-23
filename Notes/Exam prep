@@ -1,17 +1,41 @@
 
+4)
 
+    B)6.
+        A -> B Certificate of A's public key
+            Ka+ // A's info // CA's info // E(Kca-)[H(Ka+//A's info//CA's info)]
+        B compares 
+            H(Ka+//A's info//CA's info) to D(Kca+)[E(Kca-)[H(Ka+//A's info//CA's info)]]
 5)
     2.8 What are the principal ingredients of a public-key cryptosystem? 
     2.10 What is the difference between a private key and a secret key? 
     2.11 What is a digital signature? 2.12 What is a public-key certificate? 
     2.13 How can public-key encryption be used to distribute a secret key?
 
-    Problem A(based on 2/E Textbook, Page 104, 3.5)A phonetic password generator picks two segments randomly for each six-letter password. The form of each segment is CVC (consonant, vowel, consonant), where V =<a, e, i, o, u>and C = 
+    Problem A(based on 2/E Textbook, Page 104, 3.5)
+    A phonetic password generator picks two segments randomly for each six-letter password. The form of each segment is CVC (consonant, vowel, consonant), where V =<a, e, i, o, u>and C = 
     a. What is the total password population? 
     b. What is the probability of an adversary guessing a password correctly(use scientific annotation and keep 3 significant digits)
 
-    Problem B(based on Textbook, Page 104, 3.6)Assume that passwords are limited to the use of the 95 printable ASCII characters and that all passwords are 10 characters in length. Assume a password cracker with an encryption rate of 6.4 million encryptions per second. 
+    Problem B(based on Textbook, Page 104, 3.6)
+    Assume that passwords are limited to the use of the 95 printable ASCII characters and that all passwords are 10 characters in length. Assume a password cracker with an encryption rate of 6.4 million encryptions per second. 
     How long will it take to test exhaustively all possible passwords ona UNIX system(unit: years)?
     (Hint: To keep it simple, just assumed that (1) the salt is either not used or for one given hashed password with the given salt; (2) one encryption means run the hash routine once.)
 
+    Problem C(modified from Textbook, Page 104, 3.8 and 3.9)
+    It was stated that the inclusion of the salt in the UNIX password scheme increases the difficulty of guessing by a factor of 4096.
+    Let’s use a case to explain why it is asserted that the saltincreases security although the salt is stored in plaintext in the same entry as the corresponding ciphertext password.
+    Let’s assume that the adversary has obtained a password file containing 4000 entries, each using a unique 12-bit salt.
+    a.In order to crack all the 4000 hashed passwords in the password file on a UNIX system, how many times does the hash routine, i.e., crypt(3), need to run in the worst case?
+    b.If the salt is NOT used, how many times does the hash routine, i.e., crypt(3), need to run in the worst case in order to crack all the 4000 hashed passwords?
+    c.If 24-bit salt is used for this case, does the hash routine need to run more times in the worst case to crack all the 4000 hashed passwords?  
+    If so, how many more?
+
+    Problem D. Consider a Bloom filter implemented in a proactive password checker. Four independent hash functions areused. There are 5 million words in the dictionary.  In order to have a 0.008 probability of rejecting a password not in the dictionary
+    a)What is the size of the hash table in bits? (Please use the formula to calculate it instead of reading from the graph.)
+    b)What is the size of the dictionary in bytes? (Assuming that 8 bytes are used to store each word)
+    c)What is the factor of compression achieved?
+
+    Problem E. Selectthe appropriate events in a simple challenge-response protocol from the following list and listthem in the order of occurrence._______________________________________________________________________a)The host authenticates the user if the quantities match, or rejects the user otherwise.b)The host generates a randomnumberr,and returns rto the user.c)The userrespondsthe quantity f(r, h(P))back to the host, where r is the nonce,Pis the user’s password.d)The host generates a randomnumberr,and returns randthe specification of two functions, h() and f(),to the user. e)The host compares the incoming h(P)toh(P(U)), where h(P(U))is the locally stored hash value of user U’s password.f)The user respondsthe hash value h(r, P)back to the host, where r is the nonce,Pis the user’s password.g)The host compares the incoming h(r, P)tothe calculated h(r, P(U)), where P(U) is the locally storeduser U’s password.h)Theuser transmits his or her identity, U,to the remote host.
+    i)The host compares the incoming f(r, h(P)) to the calculated f(r, h(P(U))), where h(P(U))is the locally stored hash value of user U’s password.j)Theuser transmits his or her password, P,to the remote host.k)Theuser transmits the hash value of his or her password, h(P),to the remote host.
     

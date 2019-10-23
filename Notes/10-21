@@ -1,0 +1,17 @@
+Resume info about traditional UNIX file access control
+    important for the final, 12 protection bits
+        first 9 bits: user(owner id) group other(world)
+        each can be set to rwx (111) etc.
+        id values and protection bits are part of the file's inode
+    
+Homework (two programs)
+    passwd example
+        -rwsr-xr-x 1 root root 54256 Mar26 2019 passwd
+           ^     ^ Why we can run (we are not root, or in root group)
+           The "set" bit (both setUID and x are 1) Can use as other user's permissions
+        
+        when using chmod command the binary of the bits as decimal can be provided
+    sticky bit 
+        extra bit portion in the beginning to handle directory access
+        stickybit-setGID-setUID added to front
+        shown as other having a t instead of x
