@@ -2,7 +2,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.util.ArrayList;
-import java.util.Dictionary;
 import java.util.Map;
 import java.util.Scanner;
 /*
@@ -13,7 +12,7 @@ import java.util.Scanner;
 */
 
 public class homework7{
-    private Dictionary roles_hierarchy; // roles_hierarchy[Role][0-Parent else-Children] 
+    private Map roles_hierarchy; // roles_hierarchy[Role][0-Parent else-Children] 
     private File roles; // roles hierarchy file
     private Map ROMatrix; // Permission matrix
     private File role_object; // permission matrix file
@@ -26,9 +25,8 @@ public class homework7{
 
     private boolean validate(){
         if (roles_hierarchy.size() == 0) return false;
-        Enum roles_Enum = roles_hierarchy.keys();
         int counter = 0;
-        for (String key : roles_Enum) {
+        for (String key : roles_hierarchy) {
             ArrayList temp = roles_hierarchy.get(key);
             if(temp.get(0).equals("None")){
                 counter++;
