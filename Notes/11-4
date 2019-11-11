@@ -1,0 +1,91 @@
+Missed class last wednesday (10/30)
+Homework 6 was due
+
+Covering homework 6
+    problem 4.5
+        rwx-wx---   directory (Protection mode = 730)
+        rw-r--r--   file (644)
+            file is in the directory
+        x on directory does not mean that you are able to execute the files within the directory
+            it means you are able to descend into the directory, search
+        rwx in directory - owner can list, delete, create, rename, descend into, search
+
+        able to delete file from directory, then create another. 
+            Would need to know the name since they would not have the rights to be able to list
+            or search for the file
+        
+Constraints in NIST RBAC
+    SSD (Static Seperation of Duty) and DSD (Dynamic Seperation of Duty)
+     enforces conflict of interest policies
+    SSD
+        can have mutually exclusive roles - one role per user
+        can place cardinality constraint on a set of roles - no user may have 2 or more roles from set of 5
+        can be defined as a pair (role set,n) - no user can have roles(quantity) equal to or greater than n
+        includes administrative functions
+            create/delete role sets
+            adding/deleting role members
+            viewing properties of existing SSD sets
+    DSD
+        limit the permissions available to user's session
+        no session may activate n or more roles from a set
+        enables the administrator to specify certain capabilites for a user at different,
+         non-overlapping spans of time
+
+    Prerequisite (from previous class)
+        of roles - subbordinate roles are given to super roles
+            if you have the highest powered role you also have the other roles
+
+ABAC - Attribute-Based Access control ***not covering thoroughly as RBAC*** just exposure to this concept
+    websystems tend to use more - cloud based systems find this more useful
+    Evaluates rules against attributes of entities, operations, and the environment relevant to requests
+    different databases for seperate attribute types. -query each with ID
+
+    Subject attributes
+        active entity that causes information to flow among objects or changes system state
+    Object attributes
+        object/rss is a passive information system-related entity - contains or recieves info
+    environment attributes
+        describes operational, technical, situational environment or context in which the info is accessed
+        these attributes are normally ignored in other policies (ex: MAC, DAC, RBAC)
+    ~ can implement MAC, DAC, or RBAC
+
+    very flexible set up to define more rulings than just read write execute by person and rss
+
+    similar to ACL trust chain, added Subject attributes in access control decision
+        uses rules rather than access control list to decide
+    during enforcement object attributes are provided as well
+
+
+Buffer overflow attacks
+    1988: morris internet worm
+    1995: NCSA httpd 1.3 published on Bugtraq mailing list
+    1996: Aleph One - step by step instruction to exploit stack-based buffer overflow vulnerabilites
+    2001: Code Red Worm - buffer overflow in Microsoft IIS 5.0 exploit
+    2003: Slammer Worm - same but in Microsoft SQL server 2000
+    2004: Sasser Worm - buffer overflow exploit in windows 2k/XP - Local Security Authority Subsystem Service
+
+Homework 7 will not have implementation to delete the sets
+    1-6 read txt files for set up
+        permissions txt - rights (role and object matrix)
+        user-roles matrix
+    no restriction on #ofobjects or #ofroles
+    7 -> will be about displaying
+    only admin functions will be query
+
+    creating set, adding and removing members to set
+    administrator can view, create, or asign members to sets
+    Check NIST RABC model slide for graphical example
+        object
+            any rss subject to access control
+        operation
+            executable image of program, executable
+        permission
+            approval to perform an operation on one or more RBAC protected objects
+    Reading input for config files - 2d array? array-list?
+        look into role relationship and a role hierarchy text file
+        role ID's can be handled as strings
+        read permissions txt file
+        does not need to handle deletion of role
+        chain roles up when adjusting permissions
+    we create our own txt files based on format provided in homework
+

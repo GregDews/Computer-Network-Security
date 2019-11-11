@@ -1,0 +1,15 @@
+Unix uses a special list to keep track of permissions
+No change in material that she is covering. Talking about chmod values and ways to handle permissions
+
+Extended access control lists
+Modern Unix systems:
+    FreeBSD - OpenBSD
+        Setfacl assigns a list of UNIX user IDs and groups
+        owner mask - Can only assign permissions that the owner has
+            owner rights AND requested bits -> listed user being granted
+        named users and named groups use group class permissions as mask
+Role Based Access Control - RBAC
+    many users to each role, many roles to each object
+    possibly work more dynamically
+    role permissions rarely change
+    
